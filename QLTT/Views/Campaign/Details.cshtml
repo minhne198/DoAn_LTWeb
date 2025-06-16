@@ -1,0 +1,67 @@
+﻿@model QLTT.Models.Campaign
+
+@{
+    ViewData["Title"] = "Chi tiết đợt kêu gọi";
+}
+
+<h2>@Model.Title</h2>
+
+<p><strong>Mô tả:</strong> @Model.Content</p>
+
+<p>
+    <strong>Số tiền hiện có:</strong> @Model.CurrentAmount VND<br />
+    <strong>Mục tiêu:</strong> @Model.TargetAmount VND
+</p>
+
+<p><strong>Ngày tạo:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy")</p>
+
+<div class="action-buttons mt-4">
+    <a href="@Url.Action("Donate", "Donation", new { campaignId = Model.CampaignId })" class="btn btn-primary">Ủng hộ</a>
+    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#commentModal">Bình luận</button>
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#reportModal">Báo cáo</button>
+    <a href="@Url.Action("ToggleFollow", "Follow", new { campaignId = Model.CampaignId })" class="btn btn-success">Quan tâm</a>
+    <a href="@Url.Action("Index", "Campaign")" class="btn btn-secondary">← Quay lại</a>
+</div>
+
+<!-- Modal Bình luận -->
+<div class="modal fade" id="commentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm bình luận</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Comment" asp-action="Create" method="post">
+                    <input type="hidden" name="CampaignId" value="@Model.CampaignId" />
+                    <div class="mb-3">
+                        <textarea name="Content" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Gửi bình luận</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Báo cáo -->
+<div class="modal fade" id="reportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Báo cáo chiến dịch</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Report" asp-action="Create" method="post">
+                    <input type="hidden" name="CampaignId" value="@Model.CampaignId" />
+                    <div class="mb-3">
+                        <label class="form-label">Lý do báo cáo</label>
+                        <textarea name="Reason" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-warning">Gửi báo cáo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

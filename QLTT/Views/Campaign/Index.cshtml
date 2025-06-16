@@ -1,0 +1,22 @@
+﻿@model IEnumerable<QLTT.Models.Campaign>
+
+@{
+    ViewData["Title"] = "Các đợt kêu gọi từ thiện";
+}
+
+<h2 class="mb-4">📢 Các đợt kêu gọi từ thiện</h2>
+
+@foreach (var item in Model)
+{
+    <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+            <h4 class="card-title">@item.Title</h4>
+            <p class="card-text">@item.Content?.Substring(0, Math.Min(150, item.Content.Length))...</p>
+            <p class="text-muted">
+                Quyên góp: <strong>@item.CurrentAmount</strong> / <strong>@item.TargetAmount</strong> VND
+            </p>
+            <p class="text-muted">🕒 Ngày tạo: @item.CreatedAt.ToString("dd/MM/yyyy")</p>
+            <a asp-action="Details" asp-route-id="@item.CampaignId" class="btn btn-outline-primary">Xem chi tiết</a>
+        </div>
+    </div>
+}

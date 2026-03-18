@@ -1,59 +1,102 @@
-🧠 QLTT – Nền tảng kêu gọi quyên góp từ thiện
-🚀 Đồ án web (ASP.NET Core MVC)
-Đề tài: Xây dựng hệ thống kêu gọi – tiếp nhận quyên góp minh bạch cho cộng đồng.
-Công nghệ: ASP.NET Core MVC · EF Core · SQL Server · Bootstrap · Cookie Auth
+# QLTT - Hệ Thống Quản Lý Từ Thiện
+Hệ thống quản lý quyên góp và chiến dịch từ thiện trực tuyến - Personal Life OS (Charity Management Module)
 
-📚 Giới thiệu đề tài
-Hệ thống cho phép người dùng tạo chiến dịch kêu gọi, theo dõi tiến độ, và ủng hộ trực tiếp. Nền tảng hướng đến minh bạch thông tin và tăng khả năng kết nối giữa người cần hỗ trợ và cộng đồng.
+## Công Nghệ Sử Dụng (Tech Stack)
+- **Framework**: ASP.NET Core MVC 8.0
+- **Ngôn ngữ**: C#
+- **Cơ sở dữ liệu**: SQL Server (Entity Framework Core)
+- **Giao diện (Styling)**: Bootstrap 5, Custom CSS
+- **Thành phần UI**: FontAwesome, jQuery
+- **Xác thực**: Cookie-based Authentication
 
-🎯 Mục tiêu
+## Tính Năng Chính (Features)
+- **Xác thực người dùng** - Đăng nhập/Đăng ký bảo mật với phân quyền Admin/User.
+- **Quản lý chiến dịch** - Tạo, xem chi tiết và quản lý các cuộc vận động quyên góp.
+- **Quyên góp trực tuyến** - Gửi đóng góp kèm lời nhắn cho từng chiến dịch cụ thể.
+- **Tương tác xã hội** - Bình luận và theo dõi (Follow) các chiến dịch quan tâm.
+- **Bảng điều khoản Admin** - Duyệt chiến dịch, quản lý người dùng và xem báo cáo.
+- **Lịch sử hoạt động** - Lưu trữ Audit Logs và thông báo (Notifications).
 
-Xây dựng web quản lý chiến dịch quyên góp theo mô hình MVC.
-Cho phép đăng ký/đăng nhập, tạo chiến dịch, theo dõi và đóng góp.
-Mở rộng được các chức năng quản trị, kiểm duyệt và lịch sử giao dịch.
-🧩 Ý nghĩa
+## Bắt Đầu (Getting Started)
 
-Hỗ trợ kêu gọi từ thiện minh bạch, dễ tiếp cận.
-Khuyến khích cộng đồng cùng tham gia, theo dõi tiến độ rõ ràng.
-Là nền tảng mở để phát triển thêm báo cáo, quản trị, thống kê.
-🧪 Chức năng đã triển khai
+### Yêu cầu hệ thống (Prerequisites)
+- .NET SDK 8.0+
+- SQL Server (LocalDB hoặc Remote)
 
-Đăng ký, đăng nhập, đăng xuất (Cookie Authentication).
-Danh sách chiến dịch, xem chi tiết.
-Tạo chiến dịch mới (upload ảnh, mục tiêu, ngày kết thúc).
-Ủng hộ chiến dịch và cập nhật tổng tiền hiện có.
-Mô hình dữ liệu đầy đủ: Users, Campaigns, Donations, Comments, Reports, Follows, Notifications, AuditLogs, AdminActions.
-🛠️ Công nghệ sử dụng
+### Cài đặt (Installation)
+1. Di chuyển vào thư mục dự án:
+   ```bash
+   cd QLTT
+   ```
+2. Khôi phục các gói phụ thuộc:
+   ```bash
+   dotnet restore
+   ```
+3. Cập nhật cơ sở dữ liệu (Migrations):
+   ```bash
+   dotnet ef database update
+   ```
 
-Backend: ASP.NET Core MVC (.NET 8)
-ORM: Entity Framework Core 9
-Database: SQL Server
-UI: Bootstrap 5, jQuery
-Auth/Session: Cookie Authentication + Session
-🏗️ Kiến trúc hệ thống
+### Chạy ứng dụng (Run Development)
+Sử dụng lệnh sau để chạy:
+```bash
+dotnet run
+```
+Mở trình duyệt tại: `https://localhost:5001` hoặc `http://localhost:5000`
 
-Mô hình MVC: Controllers → Views → Models
-EF Core quản lý dữ liệu và quan hệ
-Session + Cookie Auth cho xác thực người dùng
-🗂️ Cấu trúc dự án
+### Biên dịch (Build Production)
+```bash
+dotnet publish -c Release
+```
 
+## Biến Môi Trường (Environment Variables)
+Cấu hình trong file `appsettings.json`:
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=QLTT;Trusted_Connection=True;MultipleActiveResultSets=true"
+}
+```
+
+## Cấu Trúc Dự Án (Project Structure)
+```text
 QLTT/
-├── Controllers/        # Luồng nghiệp vụ
-├── Models/             # Entity + ViewModels
-├── Data/               # AppDbContext & mapping
-├── Views/              # Razor views
-├── Migrations/         # EF Core migrations
-├── wwwroot/            # CSS/JS/Images/Uploads
-└── Program.cs          # App pipeline & config
-🚧 Chức năng đang hoàn thiện
+├── Controllers/         # Xử lý Logic yêu cầu (Campaign, Donation, Account...)
+├── Models/              # Lớp dữ liệu và ViewModels
+├── Views/               # Giao diện Razor (.cshtml)
+│   ├── Campaign/        # Trang danh sách và chi tiết chiến dịch
+│   ├── Donation/        # Trang quyên góp
+│   ├── Admin/           # Trang quản trị hệ thống
+│   └── Shared/          # Layout chung và components
+├── Data/                # DbContext và cấu hình Migration
+└── wwwroot/             # Tài nguyên tĩnh (CSS, JS, Uploads ảnh)
+```
 
-Bình luận, báo cáo, theo dõi chiến dịch (form đã có UI).
-Trang quản trị: duyệt bài, xử lý báo cáo, quản lý user.
-Hồ sơ cá nhân, lịch sử quyên góp, chiến dịch của tôi.
-Trang Donate UI hiện còn trống.
-🏁 Hướng phát triển tiếp theo
+## Các Trang Chính (Pages)
 
-Mã hóa mật khẩu (BCrypt/ASP.NET Identity).
-Hoàn thiện Comment/Report/Follow controllers.
-Thêm phân quyền Admin + chức năng duyệt bài.
-Thống kê chiến dịch và báo cáo hệ thống.
+### Đăng nhập (/Account/Login)
+- Đăng nhập bằng tài khoản người dùng hoặc admin.
+- Chức năng đăng ký tài khoản mới.
+
+### Bảng điều khiển/Trang chủ (/Campaign/Index)
+- Hiển thị danh sách các chiến dịch đang hoạt động.
+- Sắp xếp theo ngày tạo hoặc mức độ ưu tiên.
+
+### Chi tiết chiến dịch (/Campaign/Details/{id})
+- Xem thông tin chi tiết, mục tiêu tài chính, và các khoản đóng góp đã nhận.
+- Phần bình luận và danh sách người ủng hộ.
+
+### Quyên góp (/Donation/Donate/{id})
+- Form nhập số tiền đóng góp.
+- Gửi lời nhắn (Message) kèm theo khoản ủng hộ.
+
+### Quản trị (/Admin/Dashboard)
+- Duyệt các chiến dịch mới tạo từ người dùng.
+- Quản lý danh sách người dùng và vai trò.
+- Xem báo cáo tổng quan về dòng tiền.
+
+### Cá nhân (/Profile/Index)
+- Cập nhật thông tin cá nhân.
+- Xem lịch sử các khoản đóng góp đã thực hiện.
+
+## License
+[MIT License]

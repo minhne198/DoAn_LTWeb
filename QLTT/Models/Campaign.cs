@@ -6,47 +6,152 @@ using System.Xml.Linq;
 
 namespace QLTT.Models
 {
-    public class Campaign  // Chiến dịch quyên góp
+    /// <summary>
+    /// Đại diện cho một chiến dịch quyên góp trong hệ thống.
+    /// Chiến dịch chứa thông tin về mục đích quyên góp, mục tiêu tài chính, 
+    /// người tạo, và danh sách những khoản đóng góp.
+    /// </summary>
+    public class Campaign
     {
+        /// <summary>
+        /// Mã chiến dịch duy nhất (khóa chính).
+        /// Được tự động sinh bởi database.
+        /// </summary>
         [Key]
-        public int CampaignId { get; set; } // Mã chiến dịch
+        public int CampaignId { get; set; }
 
-        [Required]
-        public int UserId { get; set; } // Người tạo chiến dịch
+        /// <summary>
+        /// Mã người dùng tạo chiến dịch (khóa ngoại).
+        /// Liên kết đến bảng Users.
+        /// </summary>
+        [Required(ErrorMessage = "Chiến dịch phải có người tạo")]
+        public int UserId { get; set; }
 
+        /// <summary>
+        /// Tham chiếu đến đối tượng User tạo chiến dịch.
+        /// </summary>
         [ForeignKey("UserId")]
         public User User { get; set; }
 
-        [Required]
-        [MaxLength(200)]
-        public string Title { get; set; } // Tiêu đề chiến dịch
+        /// <summary>
+        /// Tiêu đề/tên chiến dịch.
+        /// Bắt buộc, tối đa 200 ký tự.
+        /// Ví dụ: "Giúp đỡ trẻ em khuyết tật"
+        /// </summary>
+        [Required(ErrorMessage = "Vui lòng nhập tiêu đề chiến dịch")]
+        [MaxLength(200, ErrorMessage = "Tiêu đề không vượt quá 200 ký tự")]
+        public string Title { get; set; }
 
-        public string ReceiverInfo { get; set; } // Thông tin người nhận hỗ trợ
+        /// <summary>
+        /// Thông tin về người/gia đình cần nhận hỗ trợ.
+        /// Gồm tên, địa chỉ, hoàn cảnh cụ thể.
+        /// </summary>
+        public string ReceiverInfo { get; set; }
 
-        public string Content { get; set; } // Nội dung bài đăng
+        /// <summary>
+        /// Nội dung chi tiết của chiến dịch.
+        /// Mô tả lý do, mục đích, tình hình hiện tại của người cần giúp.
+        /// Có thể chứa HTML formatting.
+        /// </summary>
+        public string Content { get; set; }
 
-        public string ImagePath { get; set; } // Đường dẫn hình ảnh minh họa
+        /// <summary>
+        /// Đường dẫn hình ảnh đại diện của chiến dịch.
+        /// Ví dụ: "/uploads/abc123def.jpg"
+        /// Hình ảnh được lưu trong wwwroot/uploads/.
+        /// </summary>
+        public string ImagePath { get; set; }
 
-        public decimal TargetAmount { get; set; } // Số tiền cần quyên góp
+        /// <summary>
+        /// Mục tiêu tài chính - số tiền cần quyên góp (tính bằng VND).
+        /// Ví dụ: 5000000 (5 triệu đồng)
+        /// </summary>
+        [Range(1000, 999999999, ErrorMessage = "Mục tiêu tài chính phải lớn hơn 1.000 VND")]
+        public decimal TargetAmount { get; set; }
 
-        public decimal SuggestedAmount { get; set; } // Gợi ý số tiền mỗi người
+        /// <summary>
+        /// Số tiền gợi ý cho mỗi lần đóng góp (tính bằng VND).
+        /// Dùng để hướng dẫn người quyên góp.
+        /// Ví dụ: 100000 (100 ngàn đồng)
+        /// </summary>
+        public decimal SuggestedAmount { get; set; }
 
-        public decimal CurrentAmount { get; set; } = 0; // Số tiền đã nhận
+        /// <summary>
+        /// Số tiền hiện đã nhận được từ các khoản đóng góp.
+        /// Được cập nhật mỗi lần có khoản donation mới.
+        /// Mặc định = 0 khi chiến dịch được tạo.
+        /// </summary>
+        public decimal CurrentAmount { get; set; } = 0;
 
-        //public string ProofDocumentPath { get; set; } // Tài liệu minh chứng
+        /// <summary>
+        /// Trạng thái duyệt của chiến dịch.
+        /// false = chỉ quản trị viên có thể duyệt chiến dịch
+        /// true = chiến dịch đã được phê duyệt, công khai trên hệ thống
+        /// </summary>
+        public bool IsApproved { get; set; } = false;
 
-        public bool IsApproved { get; set; } = false; // Đã được duyệt chưa?
+        /// <summary>
+        /// Trạng thái hoàn thành của chiến dịch.
+        /// false = chiến dịch vẫn đang chương trình quyên góp
+        /// true = chiến dịch đã hoàn thành, không còn nhận đóng góp
+        /// </summary>
+        public bool IsCompleted { get; set; } = false;
 
-        public bool IsCompleted { get; set; } = false; // Đã hoàn thành chưa?
+        /// <summary>
+        /// Ngày bắt đầu chiến dịch.
+        /// Nullable - có thể để trống.
+        /// Mặc định được set là ngày tạo chiến dịch.
+        /// </summary>
+        public DateTime? StartDate { get; set; }
 
-        public DateTime? StartDate { get; set; } // Ngày bắt đầu
+        /// <summary>
+        /// Ngày kết thúc chiến dịch.
+        /// Nullable - có thể để trống.
+        /// Sau ngày này, chiến dịch được tự động đóng.
+        /// </summary>
+        public DateTime? EndDate { get; set; }
 
-        public DateTime? EndDate { get; set; } // Ngày kết thúc
-
+        /// <summary>
+        /// Ngày và giờ chiến dịch được tạo.
+        /// Được thiết lập tự động bởi hệ thống.
+        /// </summary>
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // Mối quan hệ
-        public ICollection<Donation> Donations { get; set; } // Danh sách người ủng hộ
-        public ICollection<Comment> Comments { get; set; } // Danh sách bình luận
+        // ==================== Mối quan hệ (Relationships) ====================
+
+        /// <summary>
+        /// Danh sách tất cả các khoản quyên góp cho chiến dịch này.
+        /// Mối quan hệ One-to-Many: 1 Campaign → Many Donations.
+        /// Khi chiến dịch bị xóa, tất cả donations liên quan cũng bị xóa (cascade delete).
+        /// </summary>
+        public ICollection<Donation> Donations { get; set; }
+
+        /// <summary>
+        /// Danh sách tất cả các bình luận trên chiến dịch này.
+        /// Mối quan hệ One-to-Many: 1 Campaign → Many Comments.
+        /// Khi chiến dịch bị xóa, tất cả comments liên quan cũng bị xóa (cascade delete).
+        /// </summary>
+        public ICollection<Comment> Comments { get; set; }
+
+        // ==================== Hàm hỗ trợ ====================
+
+        /// <summary>
+        /// Tính phần trăm hoàn thành của chiến dịch.
+        /// </summary>
+        /// <returns>Phần trăm (0-100) dựa trên CurrentAmount và TargetAmount</returns>
+        public decimal GetProgressPercentage()
+        {
+            if (TargetAmount <= 0) return 0;
+            return Math.Min((CurrentAmount / TargetAmount) * 100, 100);
+        }
+
+        /// <summary>
+        /// Kiểm tra xem chiến dịch có vượt quá mục tiêu tài chính không.
+        /// </summary>
+        /// <returns>true nếu CurrentAmount >= TargetAmount</returns>
+        public bool IsTargetReached()
+        {
+            return CurrentAmount >= TargetAmount;
+        }
     }
 }

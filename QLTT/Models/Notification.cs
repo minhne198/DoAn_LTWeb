@@ -4,22 +4,56 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QLTT.Models
 {
-    public class Notification  // Thông báo cho người dùng về các sự kiện liên quan đến chiến dịch quyên góp
+    /// <summary>
+    /// Đại diện cho một thông báo gửi đến người dùng.
+    /// Thông báo có thể là: cập nhật chiến dịch, thông báo khoản donation, duyệt chiến dịch, v.v.
+    /// </summary>
+    public class Notification
     {
+        /// <summary>
+        /// Mã thông báo duy nhất (khóa chính).
+        /// Được tự động sinh bởi database.
+        /// </summary>
         [Key]
         public int NotificationId { get; set; }
 
-        [Required]
-        public int UserId { get; set; } // Người nhận thông báo
+        /// <summary>
+        /// Mã người dùng nhận thông báo (khóa ngoại).
+        /// Liên kết đến bảng Users.
+        /// </summary>
+        [Required(ErrorMessage = "Thông báo phải gửi đến một người dùng")]
+        public int UserId { get; set; }
 
+        /// <summary>
+        /// Tham chiếu đến đối tượng User.
+        /// Người nhận thông báo.
+        /// Khi user bị xóa, thông báo của họ cũng bị xóa (cascade delete).
+        /// </summary>
         [ForeignKey("UserId")]
         public User User { get; set; }
 
-        [Required]
-        public string Content { get; set; } // Nội dung thông báo
+        /// <summary>
+        /// Nội dung của thông báo.
+        /// Bắt buộc nhập, tối đa 500 ký tự.
+        /// Ví dụ: "Chiến dịch 'Giúp em Lan' của bạn được duyệt!" 
+        /// hoặc "Bạn nhận được 100.000 VND từ người quyên góp ẩn danh"
+        /// </summary>
+        [Required(ErrorMessage = "Vui lòng nhập nội dung thông báo")]
+        [MaxLength(500, ErrorMessage = "Nội dung không vượt quá 500 ký tự")]
+        public string Content { get; set; }
 
-        public bool IsRead { get; set; } = false; // Đã đọc chưa?
+        /// <summary>
+        /// Trạng thái đã đọc của thông báo.
+        /// false = thông báo chưa được đọc (mới)
+        /// true = thông báo đã được đọc
+        /// Dùng để hiển thị badge "thông báo mới" trên giao diện.
+        /// </summary>
+        public bool IsRead { get; set; } = false;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now; // Ngày tạo thông báo
+        /// <summary>
+        /// Ngày và giờ thông báo được tạo/gửi.
+        /// Được thiết lập tự động bởi hệ thống.
+        /// </summary>
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
